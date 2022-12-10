@@ -54,7 +54,7 @@ namespace PhonesDB.DB
             OnUpgrade(db, oldVersion, newVersion);
         }
 
-        public List<SmartphoneEntity> GetPhones(string manufacturer, double diagonalSize)
+        public List<SmartphoneEntity> GetPhonesByMinimalDiagonalSize(string manufacturer, double diagonalSize)
         {
             var projection = new string[]
             {
@@ -66,7 +66,7 @@ namespace PhonesDB.DB
             };
 
             var selection = PhonesDBContract.Smartphone.Manufacturer + " = ? AND " +
-                        PhonesDBContract.Smartphone.DiagonalSize + " < ?";
+                        PhonesDBContract.Smartphone.DiagonalSize + " > ?";
             var selectionArgs = new string[]
             {
                 manufacturer,
@@ -99,10 +99,80 @@ namespace PhonesDB.DB
             return phoneList;
         }
 
+        public List<SmartphoneEntity> GetAllPhones()
+        {
+            var projection = new string[]
+            {
+                IBaseColumns.Id,
+                PhonesDBContract.Smartphone.Model,
+                PhonesDBContract.Smartphone.Manufacturer,
+                PhonesDBContract.Smartphone.DiagonalSize,
+                PhonesDBContract.Smartphone.Warehouse,
+            };
+
+            var sortOrder = PhonesDBContract.Smartphone.DiagonalSize + " DESC";
+            var cursor = ReadableDatabase.Query(
+                PhonesDBContract.Smartphone.TableName,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                sortOrder);
+            var phoneList = new List<SmartphoneEntity>();
+
+            while (cursor.MoveToNext())
+            {
+                phoneList.Add(new SmartphoneEntity
+                {
+                    Id = cursor.GetInt(cursor.GetColumnIndexOrThrow(IBaseColumns.Id)),
+                    Manufacturer = cursor.GetString(cursor.GetColumnIndexOrThrow(PhonesDBContract.Smartphone.Manufacturer)),
+                    Model = cursor.GetString(cursor.GetColumnIndexOrThrow(PhonesDBContract.Smartphone.Model)),
+                    DiagonalSize = cursor.GetDouble(cursor.GetColumnIndexOrThrow(PhonesDBContract.Smartphone.DiagonalSize)),
+                    WarehouseAddress = cursor.GetString(cursor.GetColumnIndexOrThrow(PhonesDBContract.Smartphone.Warehouse)),
+                });
+            }
+            cursor.Close();
+            return phoneList;
+        }
+
+        public List<string> GetAllWarehouses()
+        {
+            var projection = new string[]
+            {
+                PhonesDBContract.Smartphone.Warehouse,
+            };
+
+            var cursor = ReadableDatabase.Query(
+                true,
+                PhonesDBContract.Smartphone.TableName,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+            var warehousesList = new List<string>();
+
+            while (cursor.MoveToNext())
+            {
+                warehousesList.Add(cursor.GetString(cursor.GetColumnIndexOrThrow(PhonesDBContract.Smartphone.Warehouse)));
+            }
+            cursor.Close();
+            return warehousesList;
+        }
+
         public double GetAverageDiagonalSize()
         {
             var cursor = ReadableDatabase.RawQuery(_getAverageDiagonalSizeScript, null);
-            var averageDiagonalSize = cursor.GetDouble(cursor.GetColumnIndexOrThrow("AvgDiagonalSize"));
+            var averageDiagonalSize = .0;
+
+            while (cursor.MoveToNext())
+            {
+                averageDiagonalSize = cursor.GetDouble(cursor.GetColumnIndexOrThrow("AvgDiagonalSize"));
+            }
+
             cursor.Close();
             return averageDiagonalSize;
         }

@@ -23,14 +23,14 @@ namespace PhonesDB.DB
                     Manufacturer = "Motorola",
                     Model = "G32 6/128GB Satin Maroon",
                     DiagonalSize = 6.5,
-                    WarehouseAddress = "вулиця Стрийська, 85а, Львів, Львівська область, 79000",
+                    WarehouseAddress = "525 S Winchester Blvd, San Jose, CA 95128, Сполучені Штати",
                 },
                 new SmartphoneEntity
                 {
                     Manufacturer = "Motorola",
                     Model = "E20 2/32 GB Graphite",
                     DiagonalSize = 5.5,
-                    WarehouseAddress = "Aleja Józefa Piłsudskiego 12/2, 20-011 Lublin, Польща",
+                    WarehouseAddress = "1199 Jacklin Rd, Milpitas, CA 95035, Сполучені Штати",
                 },
                 new SmartphoneEntity
                 {

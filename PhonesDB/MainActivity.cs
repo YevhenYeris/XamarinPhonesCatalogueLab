@@ -11,6 +11,9 @@ using PhonesDB.DB;
 using Android.Widget;
 using System.Linq;
 using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
+using AndroidX.RecyclerView.Widget;
+using Android.Content;
+using System.Collections.Generic;
 
 namespace PhonesDB
 {
@@ -18,6 +21,7 @@ namespace PhonesDB
     public class MainActivity : AppCompatActivity
     {
         private PhonesDBHelper _dBHelper;
+        private bool _filterApplied = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -28,25 +32,56 @@ namespace PhonesDB
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
-            var fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-            fab.Click += FabOnClick;
-
             InitDB();
             DisplayAllPhones();
+            DisplayAverageDiagonalSize();
+            InitContacts();
+            InitWarehouses();
         }
 
         private void InitDB()
         {
             _dBHelper = new PhonesDBHelper(this);
-            //_dBHelper.OnCreate(_dBHelper.WritableDatabase);
+        }
+
+        private void InitWarehouses()
+        {
+            var warehousesButton = FindViewById<Button>(Resource.Id.warehousesButton);
+            warehousesButton.Click += (object sender, EventArgs e) =>
+            {
+                Intent nextActivity = new Intent(this, typeof(WarehousesActivity));
+                StartActivity(nextActivity);
+            };
+        }
+
+        private void InitContacts()
+        {
+            var contactsButton = FindViewById<Button>(Resource.Id.contactsButton);
+            contactsButton.Click += (object sender, EventArgs e) =>
+            {
+                Intent nextActivity = new Intent(this, typeof(ContactsActivity));
+                StartActivity(nextActivity);
+            };
         }
 
         private void DisplayAllPhones()
         {
-            var phones = _dBHelper.GetPhones("Motorola", 5);
-            var list = FindViewById<ListView>(Resource.Id.list);
-            var arrayAdapter = new ArrayAdapter<String>(this, Resource.Layout.support_simple_spinner_dropdown_item, phones.Select(p => p.Model).ToArray());
-            list.Adapter = arrayAdapter;
+            var filterButton = FindViewById<Button>(Resource.Id.filterPhones);
+            filterButton.Click += (object sender, EventArgs e) =>
+            {
+                filterButton.Text = _filterApplied ? "Показати усі моделі" : "Показати за фільтром";
+                var phones = _filterApplied ? _dBHelper.GetPhonesByMinimalDiagonalSize("Motorola", 5) : _dBHelper.GetAllPhones();
+                var list = FindViewById<ListView>(Resource.Id.mobile_list);
+                var arrayAdapter = new ArrayAdapter<string>(this, Resource.Layout.activity_listview, Resource.Id.listtextview, phones.Select(p => p.Manufacturer + " " + p.Model + " " + p.DiagonalSize).ToArray());
+                list.Adapter = arrayAdapter;
+                _filterApplied = !_filterApplied;
+            };
+        }
+
+        private void DisplayAverageDiagonalSize()
+        {
+            var diagonalSizeText = FindViewById<TextView>(Resource.Id.averageDiagonalSize);
+            diagonalSizeText.Text = "Середня довжина діагоналі становить " + _dBHelper.GetAverageDiagonalSize();
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

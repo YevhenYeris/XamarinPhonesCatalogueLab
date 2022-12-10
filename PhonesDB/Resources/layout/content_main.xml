@@ -1,20 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:padding="15dp">
+
+   <Button
+       android:id="@+id/contactsButton"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="Контакти"
+       android:layout_margin="15dp"/>
+
+   <Button
+       android:id="@+id/filterPhones"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="Показати усі моделі"
+       android:layout_margin="15dp"/>
+
+   <Button
+       android:id="@+id/warehousesButton"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="Показати список складів"
+       android:layout_margin="15dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Hello World!" />
-    <ListView
-        android:id="@+id/list"
+        android:id="@+id/averageDiagonalSize"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:layout_margin="15dp"
+        android:textAlignment="center"/>
 
-</RelativeLayout>
+   <ListView     
+      android:id="@+id/mobile_list"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:divider="#f00"
+      android:dividerHeight="1dp"
+      android:paddingHorizontal="25dp">
+   </ListView>
+
+</LinearLayout>
